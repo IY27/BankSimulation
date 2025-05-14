@@ -19,6 +19,9 @@ def deposit():
 def showTransactions():
     None
 
+def saveTransactions():
+    None
+
 def showBalance():
     None
 
