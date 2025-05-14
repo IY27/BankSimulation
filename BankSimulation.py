@@ -1,1 +1,26 @@
-print("This is the initial commit")
+def description():
+    None
+
+def askAccount():
+    None
+
+def createAccount():
+    None
+
+def options():
+    None
+
+def withdraw():
+    None
+
+def deposit():
+    None
+
+def showTransactions():
+    None
+
+def showBalance():
+    None
+
+def exit():
+    None
