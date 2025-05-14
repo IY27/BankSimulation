@@ -1,10 +1,16 @@
 def description():
-    None
+    with open('description.txt','r')as f:
+            description = f.read()
+            print(description)
+            print()
 
 def askAccount():
     None
 
 def createAccount():
+    None
+
+def login():
     None
 
 def options():
@@ -27,3 +33,5 @@ def showBalance():
 
 def exit():
     None
+
+description()
