@@ -5,7 +5,26 @@ def description():
             print()
 
 def askAccount():
-    None
+    while True:
+        askaccount = input("Do you have a bank account? : (Yes/No) ").lower().strip()
+        if askaccount == "yes":
+            login()
+        elif askaccount == "no":
+            makeaccount = input("Would you like to create an account? : (Yes/No) ").lower().strip()
+            if makeaccount == "yes":
+                createAccount()
+            elif makeaccount == "no":
+                exit_option = input("Would you like to exit? (Yes/No) ").lower().strip()
+                if exit_option == "yes":
+                    quit()
+                elif exit_option == "no":
+                    continue
+                else:
+                    print("Please enter Yes or No")
+            else:
+                print("Please enter Yes or No")
+        else: 
+            print("Please enter Yes or No")
 
 def createAccount():
     None
@@ -35,3 +54,4 @@ def exit():
     None
 
 description()
+askAccount()
