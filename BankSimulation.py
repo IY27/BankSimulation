@@ -1,3 +1,19 @@
+import json
+
+accounts = {}
+
+def saveAccounts():
+    with open("accounts.json","w") as a:
+        json.dump(accounts, a)
+
+def loadAccounts():
+    global accounts
+    try:
+        with open('accounts.json', 'r') as a:
+            accounts = json.load(a)
+    except FileNotFoundError:
+        accounts = {}
+
 def description():
     with open('description.txt','r')as f:
             description = f.read()
@@ -5,7 +21,6 @@ def description():
             print()
 
 def askAccount():
-    while True:
         askaccount = input("Do you have a bank account? : (Yes/No) ").lower().strip()
         if askaccount == "yes":
             login()
@@ -13,7 +28,7 @@ def askAccount():
             createAccount()
         else:
             print("Please enter Yes or No")
-            askaccount = input("Do you have a bank account? : (Yes/No) ").lower().strip()
+            askAccount()
 
 MIN_AGE = 13
 MAX_AGE = 18
@@ -40,14 +55,18 @@ def createAccount():
             while username == "":
                 print("Please enter an username")
                 username = input("Enter Username : ")
+            while username in accounts:
+                print("Username is already taken, please enter another username")
+                username = input("Enter Username : ")
             else:
                 password = input("Enter Password : ").strip()
                 while password == "":
                     print("Please enter a password")
                     password = input("Enter Password : ").strip()
                 else:
+                    accounts[username] = [password, 0]
+                    saveAccounts()
                     login()
-                    return
         except ValueError:
             print("Please enter an integer")
     else:
@@ -84,5 +103,8 @@ def exit():
             return
         else: 
             print("Please enter Yes or No")
+
+loadAccounts()
 description()
 askAccount()
+
