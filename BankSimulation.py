@@ -116,7 +116,7 @@ def options(username):
             elif select == 3:
                 print("You have chosen to withdraw")
                 showBalance(username)
-                withdraw()  
+                withdraw(username)  
             elif select == 4:
                 print("You have chosen to check your transactions")
                 showTransactions() 
@@ -128,8 +128,21 @@ def options(username):
         except ValueError:
             print("Please enter an option 1 - 5")
 
-def withdraw():
-    None
+def withdraw(username):
+    while True:
+        try:
+            amount = float(input("Enter amount to withdraw: $"))
+            if accounts[username][1]<= amount:
+                print("You cannot withdraw more than your balance")
+                continue
+            elif accounts[username][1]>= amount:
+                accounts[username][1] -= amount
+                saveAccounts()
+                print(f"${amount:.2f} deposited. New balance: ${accounts[username][1]:.2f}")
+            break
+        except ValueError:
+            print("Please enter a valid number.")
+
 
 def deposit(username):
     while True:
