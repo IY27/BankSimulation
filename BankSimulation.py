@@ -90,17 +90,17 @@ def login():
         password = input("Enter Password: ").strip()
         while accounts[username][0] == password:
             print(f"Welcome, {username}!")
-            options()
+            options(username)
         else:
             print("Incorrect password. Please try again.")
             login()
 
-def options():
-    print(
-    "1 - Show Balance\n" \
-    "2 - Deposit\n" \
-    "3 - Withdraw\n" \
-    "4 - Show Transactions\n" \
+def options(username):
+    print("Please choose an option :\n"
+    "1 - Show Balance\n" 
+    "2 - Deposit\n" 
+    "3 - Withdraw\n" 
+    "4 - Show Transactions\n" 
     "5 - Exit")
     while True:
         print("Please choose an option :")
@@ -110,7 +110,7 @@ def options():
                 showBalance()
                 print("You have chosen to check your balance")
             elif select == 2:
-                deposit() 
+                deposit(username) 
                 print("You have chosen to deposit")
             elif select == 3:
                 withdraw()  
@@ -129,8 +129,19 @@ def options():
 def withdraw():
     None
 
-def deposit():
-    None
+def deposit(username):
+    while True:
+        try:
+            amount = float(input("Enter amount to deposit: $"))
+            if amount <= 0:
+                print("Please enter a positive amount.")
+                continue
+            accounts[username][1] += amount
+            saveAccounts()
+            print(f"${amount:.2f} deposited. New balance: ${accounts[username][1]:.2f}")
+            break
+        except ValueError:
+            print("Please enter a valid number.")
 
 def showTransactions():
     None
