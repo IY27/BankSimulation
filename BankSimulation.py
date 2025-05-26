@@ -96,7 +96,35 @@ def login():
             login()
 
 def options():
-    None
+    print(
+    "1 - Show Balance\n" \
+    "2 - Deposit\n" \
+    "3 - Withdraw\n" \
+    "4 - Show Transactions\n" \
+    "5 - Exit")
+    while True:
+        print("Please choose an option :")
+        try:
+            select = int(input(""))
+            if select == 1:
+                showBalance()
+                print("You have chosen to check your balance")
+            elif select == 2:
+                deposit() 
+                print("You have chosen to deposit")
+            elif select == 3:
+                withdraw()  
+                print("You have chosen to withdraw")
+            elif select == 4:
+                showTransactions() 
+                print("You have chosen to check your transactions")
+            elif select == 5:
+                exit()
+                print("You have chosen to exit")     
+            else:
+                print("Please enter an option 1 - 5")
+        except ValueError:
+            print("Please enter an option 1 - 5")
 
 def withdraw():
     None
