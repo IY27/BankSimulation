@@ -107,20 +107,22 @@ def options(username):
         try:
             select = int(input(""))
             if select == 1:
-                showBalance()
                 print("You have chosen to check your balance")
+                showBalance(username)
             elif select == 2:
-                deposit(username) 
                 print("You have chosen to deposit")
+                showBalance(username)
+                deposit(username) 
             elif select == 3:
-                withdraw()  
                 print("You have chosen to withdraw")
+                showBalance(username)
+                withdraw()  
             elif select == 4:
-                showTransactions() 
                 print("You have chosen to check your transactions")
+                showTransactions() 
             elif select == 5:
-                exit()
-                print("You have chosen to exit")     
+                print("You have chosen to exit")  
+                exit()   
             else:
                 print("Please enter an option 1 - 5")
         except ValueError:
@@ -149,8 +151,9 @@ def showTransactions():
 def saveTransactions():
     None
 
-def showBalance():
-    None
+def showBalance(username):
+    balance = accounts[username][1]
+    print(f"Your balance is [${balance}]")
 
 def exit():
     while True:
