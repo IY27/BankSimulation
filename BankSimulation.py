@@ -36,20 +36,18 @@ MIN_AGE = 13
 MAX_AGE = 18
 
 def askAge():
-    try:
-        age = int(input("Enter your age : "))
-        while age < MIN_AGE:
-            print("You cannot be younger than 13 years old")
-            askAge()
-        while age > MAX_AGE:
-            print("You cannot be older than 18 years old")
-            askAge()
-        else:
-            print("You are eligible to create an account")
-            return
-    except ValueError:
-        print("Please enter an integer")
-        askAge()
+    while True:
+        try:
+            age = int(input("Enter your age : "))
+            if age < MIN_AGE:
+                print("You cannot be younger than 13 years old")
+            elif age > MAX_AGE:
+                print("You cannot be older than 18 years old")
+            else:
+                print("You are eligible to create an account")
+                return
+        except ValueError:
+            print("Please enter an integer")
 
 def createAccount():
     while True:
