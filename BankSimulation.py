@@ -1,6 +1,7 @@
 import json
 
 accounts = {}
+transactions = {}
 
 def saveAccounts():
     with open("accounts.json", "w") as accountfile: 
@@ -96,31 +97,36 @@ def login():
             login()
 
 def options(username):
-    print("Please choose an option :\n"
-    "1 - Show Balance\n" 
-    "2 - Deposit\n" 
-    "3 - Withdraw\n" 
-    "4 - Show Transactions\n" 
-    "5 - Exit")
     while True:
-        print("Please choose an option :")
         try:
-            select = int(input(""))
+            print("---------------------------------------------------")
+            print(
+                "1 - Show Balance\n" 
+                "2 - Deposit\n" 
+                "3 - Withdraw\n" 
+                "4 - Show Transactions\n" 
+                "5 - Exit")
+            select = int(input("Please choose an option :"))
             if select == 1:
+                print("---------------------------------------------------")
                 print("You have chosen to check your balance")
                 showBalance(username)
             elif select == 2:
+                print("---------------------------------------------------")
                 print("You have chosen to deposit")
                 showBalance(username)
                 deposit(username) 
             elif select == 3:
+                print("---------------------------------------------------")
                 print("You have chosen to withdraw")
                 showBalance(username)
                 withdraw(username)  
             elif select == 4:
+                print("---------------------------------------------------")
                 print("You have chosen to check your transactions")
-                showTransactions() 
+                showTransactions(username) 
             elif select == 5:
+                print("---------------------------------------------------")
                 print("You have chosen to exit")  
                 exit()   
             else:
@@ -129,22 +135,28 @@ def options(username):
             print("Please enter an option 1 - 5")
 
 def withdraw(username):
+    action = "Withdraw"
     while True:
         try:
             amount = float(input("Enter amount to withdraw: $"))
-            if accounts[username][1]<= amount:
+            if amount <= 0:
+                print("Please enter a positive amount.")
+                continue
+            elif accounts[username][1]<= amount:
                 print("You cannot withdraw more than your balance")
                 continue
             elif accounts[username][1]>= amount:
                 accounts[username][1] -= amount
                 saveAccounts()
                 print(f"${amount:.2f} deposited. New balance: ${accounts[username][1]:.2f}")
+                saveTransactions(username, action, amount)
             break
         except ValueError:
             print("Please enter a valid number.")
 
 
 def deposit(username):
+    action = "Deposit"
     while True:
         try:
             amount = float(input("Enter amount to deposit: $"))
@@ -154,15 +166,36 @@ def deposit(username):
             accounts[username][1] += amount
             saveAccounts()
             print(f"${amount:.2f} deposited. New balance: ${accounts[username][1]:.2f}")
+            saveTransactions(username, action, amount)
             break
         except ValueError:
             print("Please enter a valid number.")
 
-def showTransactions():
-    None
+def loadTransactions():
+    global transactions
+    try:
+        with open("transactions.json", "r") as tfile:
+            transactions = json.load(tfile)
+    except (FileNotFoundError, json.decoder.JSONDecodeError):
+        transactions = {}
 
-def saveTransactions():
-    None
+def showTransactions(username):
+    if username in transactions and transactions[username]:
+        print("Your transactions:")
+        for t in transactions[username]:
+            print(f"{t['action']}: ${t['amount']:.2f}")
+    else:
+        print("No transactions found.")
+
+def saveTransactions(username, action, amount):
+    if username not in transactions:
+        transactions[username] = []
+    transactions[username].append({
+        "action": action,
+        "amount": amount
+    })
+    with open("transactions.json", "a") as f:
+        json.dump(transactions, f, indent=2)
 
 def showBalance(username):
     balance = accounts[username][1]
@@ -177,7 +210,8 @@ def exit():
             return
         else: 
             print("Please enter Yes or No")
-            
+
+loadTransactions()          
 loadAccounts()
 description()
 askAccount()
