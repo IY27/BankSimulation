@@ -1,0 +1,4 @@
+Hello, this is a Bank Simulation Program.
+You are able to create accounts, deposit/withdraw amounts
+from your bank balance, view your transaction history and your bank
+balance. (Currency : NZD)
