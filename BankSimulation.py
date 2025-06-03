@@ -1,4 +1,9 @@
 import json
+import datetime
+
+def timeNow():
+    global TIME
+    TIME = datetime.datetime.now()
 
 #Blank dictionaries to import existing data from external files
 accounts = {}
@@ -199,8 +204,9 @@ def withdraw(username):
                 #Renews the account balance 
                 saveAccounts()
                 print(f"${amount:.2f} withdrawed. New balance: ${accounts[username][1]:.2f}")
+                timeNow()
                 #Saves this transaction to the external file
-                saveTransactions(username, action, amount)
+                saveTransactions(username, action, amount, TIME)
             break
         except ValueError:
             #Prints this if the input is not a number
@@ -223,8 +229,9 @@ def deposit(username):
             #Renews the account balance 
             saveAccounts()
             print(f"${amount:.2f} deposited. New balance: ${accounts[username][1]:.2f}")
+            timeNow()
             #Saves this transaction to the external file
-            saveTransactions(username, action, amount)
+            saveTransactions(username, action, amount, TIME)
             break
         except ValueError:
             #Prints this if the input is not a number
@@ -247,21 +254,22 @@ def showTransactions(username):
     if username in transactions and transactions[username]:
         print("Your transactions:")
         for t in transactions[username]:
-            print(f"{t['action']}: ${t['amount']:.2f}")
+            print(f"{t["time"]} {t["action"]}: ${t["amount"]:.2f}")
     else:
         #Prints this if no exisitng transactions are found
         print("No transactions found.")
 
 #Saves transaction function
-def saveTransactions(username, action, amount):
+def saveTransactions(username, action, amount, TIME):
     #Checks existing username is not in transactions, it will create a new dictionary for that username
     if username not in transactions:
         transactions[username] = []
     transactions[username].append({
+        "time": TIME.strftime("%c"),
         "action": action,
         "amount": amount
     })
-    with open("transactions.json", "a") as f:
+    with open("transactions.json", "w") as f:
         json.dump(transactions, f, indent=2)
 
 #Show balance function
