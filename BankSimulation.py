@@ -56,10 +56,10 @@ def askAge():
         try:
             age = int(input("Enter your age : "))
             #User less than the age of 13, loops back
-            if age <= MIN_AGE:
+            if age < MIN_AGE:
                 print("You cannot be younger than 13 years old")
             #User more than the age of 18, loops back
-            elif age >= MAX_AGE:
+            elif age > MAX_AGE:
                 print("You cannot be older than 18 years old")
             #Entering an age between 13-18 will return the user back to the createAccount() function
             else:
