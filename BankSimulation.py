@@ -184,6 +184,9 @@ def options(username):
 #Withdrawing money function
 def withdraw(username):
     #Variable for the transaction function to identify the action
+    if accounts[username][1] == 0:
+        print("You cannot make any withdrawals as your bank balance is at $0")
+        return
     action = "Withdraw"
     while True:
         try:
@@ -194,7 +197,7 @@ def withdraw(username):
                 print("Please enter a positive amount.")
                 continue
             #Loops back if amount is more than the current balance
-            elif accounts[username][1]<= amount:
+            elif accounts[username][1]< amount:
                 print("You cannot withdraw more than your balance")
                 continue
             #If amount is less than the current balance 
