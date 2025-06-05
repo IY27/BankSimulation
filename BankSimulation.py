@@ -1,5 +1,6 @@
 import json
 import datetime
+from tkinter import *
 
 def timeNow():
     global TIME
@@ -27,24 +28,79 @@ def loadAccounts():
 
 #Fuction for printing the description of the code from an external file
 def description():
+    #Creates an instance of a window
+    window = Tk()
+    #The title of the window
+    window.title("Bank Simulation Program")
+    #Converts my logo.png file into a PhotoImage usable for Tkinter
+    icon = PhotoImage(file="logo.png")
+    #Displays my logo on the window
+    window.iconphoto(True,icon)
+    window.configure(bg="black")
     with open("description.txt","r")as f:
             description = f.read()
-            print(description)
-            print()
+    label = Label(window,
+                  text=description,
+                  font=("Arial",12),
+                  fg="white",
+                  bg="black",
+                  padx=10,
+                  pady=10
+                  )
+    label.pack()
+    button = Button(window,text="Next")
+    button.config(command=lambda: [window.destroy(), askAccount()],
+                  fg="white",
+                  bg="black",
+                  font=("Arial",15),
+                  activebackground="white",
+                  activeforeground="black"
+                  )
+    button.pack(padx=10,pady=10)
+    window.mainloop()
 
 #Asks if the user have a bank account
 def askAccount():
-    while True:
-        askaccount = input("Do you have a bank account? (Yes/No) : ").lower().strip()
-        #If yes, the code will proceed with the login function
-        if askaccount == "yes":
-            login()
-        #If no, the code will proceed with the createAccount() function
-        elif askaccount == "no":
-            createAccount()
-        #If the user enters anything but yes or no, it will loop back because of the While loop
-        else:
-            print("Please enter Yes or No")
+    window = Tk()
+    window.title("Bank Simulation Program")
+    icon = PhotoImage(file="logo.png")
+    window.iconphoto(True,icon)
+    window.configure(bg="black")
+    label = Label(window,
+                  text="Do you have a bank account? (Yes/No)",
+                  font=("Arial",12),
+                  fg="white",
+                  bg="black",
+                  padx=10,
+                  pady=10
+                  )
+    label.grid(row=0, column=0, columnspan=3, pady=10)
+    button1 = Button(window, text="Yes")
+    button1.config(command=login,
+                fg="white",
+                bg="black",
+                font=("Arial",15),
+                activebackground="white",
+                activeforeground="black")
+    button1.grid(row=1, column=0, padx=10, pady=10)
+    button2 = Button(window, text="No")
+    button2.config(command=createAccount,
+                fg="white",
+                bg="black",
+                font=("Arial",15),
+                activebackground="white",
+                activeforeground="black")
+    button2.grid(row=1, column=1, padx=10, pady=10)
+    button3 = Button(window, text="Exit")
+    button3.config(command=exit,
+                fg="white",
+                bg="black",
+                font=("Arial",15),
+                activebackground="white",
+                activeforeground="black")
+    button3.grid(row=1, column=2, padx=10, pady=10)
+    window.mainloop()
+    
 
 #Constants for minimum and maximum age
 MIN_AGE = 13
@@ -183,10 +239,11 @@ def options(username):
 
 #Withdrawing money function
 def withdraw(username):
-    #Variable for the transaction function to identify the action
+    #Checks if the user balance is = 0 if so returns back to the option menu
     if accounts[username][1] == 0:
         print("You cannot make any withdrawals as your bank balance is at $0")
         return
+    #Variable for the transaction function to identify the action
     action = "Withdraw"
     while True:
         try:
@@ -300,8 +357,5 @@ def exit():
 loadTransactions()   
 #Loads all of the accounts when the code starts       
 loadAccounts()
-#Prints the description
+#Prints the description, and starts the bank simulation
 description()
-#Starts the bank simulation
-askAccount()
-
