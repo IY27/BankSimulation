@@ -23,7 +23,7 @@ def loadAccounts():
         with open("accounts.json", "r") as a:
             accounts = json.load(a)
     #If the accounts.json file cannot be found it will proceed with a blank dictionary
-    except FileNotFoundError:
+    except (FileNotFoundError, json.decoder.JSONDecodeError):
         accounts = {}
 
 #Fuction for printing the description of the code from an external file
@@ -66,39 +66,30 @@ def askAccount():
     icon = PhotoImage(file="logo.png")
     window.iconphoto(True,icon)
     window.configure(bg="black")
-    label = Label(window,
-                  text="Do you have a bank account? (Yes/No)",
-                  font=("Arial",12),
-                  fg="white",
-                  bg="black",
-                  padx=10,
-                  pady=10
-                  )
-    label.grid(row=0, column=0, columnspan=3, pady=10)
-    button1 = Button(window, text="Yes")
-    button1.config(command=login,
+    button1 = Button(window, text="Login")
+    button1.config(command=lambda: [window.destroy(), login()],
                 fg="white",
                 bg="black",
                 font=("Arial",15),
                 activebackground="white",
                 activeforeground="black")
-    button1.grid(row=1, column=0, padx=10, pady=10)
-    button2 = Button(window, text="No")
-    button2.config(command=createAccount,
+    button1.grid(row=0, column=0, padx=10, pady=10)
+    button2 = Button(window, text="Create Account")
+    button2.config(command=lambda: [window.destroy(), createAccount()],
                 fg="white",
                 bg="black",
                 font=("Arial",15),
                 activebackground="white",
                 activeforeground="black")
-    button2.grid(row=1, column=1, padx=10, pady=10)
+    button2.grid(row=0, column=1, padx=10, pady=10)
     button3 = Button(window, text="Exit")
-    button3.config(command=exit,
+    button3.config(command= exit,
                 fg="white",
                 bg="black",
                 font=("Arial",15),
                 activebackground="white",
                 activeforeground="black")
-    button3.grid(row=1, column=2, padx=10, pady=10)
+    button3.grid(row=0, column=2, padx=10, pady=10)
     window.mainloop()
     
 
@@ -106,196 +97,402 @@ def askAccount():
 MIN_AGE = 13
 MAX_AGE = 18
 
-#Asks the user for their age
-def askAge():
-    while True:
-        try:
-            age = int(input("Enter your age : "))
-            #User less than the age of 13, loops back
-            if age < MIN_AGE:
-                print("You cannot be younger than 13 years old")
-            #User more than the age of 18, loops back
-            elif age > MAX_AGE:
-                print("You cannot be older than 18 years old")
-            #Entering an age between 13-18 will return the user back to the createAccount() function
-            else:
-                print("You are eligible to create an account")
-                return
-        #Captures value errors 
-        except ValueError:
-            print("Please enter an integer")
-
 #Create account function
 def createAccount():
-    while True:
-        #Asks if user wants to create an account
-        makeaccount = input("Would you like to create an account? (Yes/No) :  ").lower().strip()
-        #If no, the code proceeds with the exit() function
-        if makeaccount == "no":
-            exit()
+    window = Tk()
+    window.title("Bank Simulation Program")
+    icon = PhotoImage(file="logo.png")
+    window.iconphoto(True,icon)
+    window.configure(bg="black")
+    label = Label(window,
+                  text="Create New Account",
+                  font=("Arial",12),
+                  fg="white",
+                  bg="black",
+                  padx=10,
+                  pady=10
+                  )
+    label.grid(row=0, column=0, columnspan=3, pady=10)
+    username_label = Label(window,
+                  text="Username:",
+                  font=("Arial",12),
+                  fg="white",
+                  bg="black",
+                  padx=10,
+                  pady=10
+                  )
+    username_label.grid(row=1, column=0)
+    password_label = Label(window,
+                  text="Password:",
+                  font=("Arial",12),
+                  fg="white",
+                  bg="black",
+                  padx=10,
+                  pady=10
+                  )
+    password_label.grid(row=2, column=0)
+    age_label = Label(window,
+                  text="Age:",
+                  font=("Arial",12),
+                  fg="white",
+                  bg="black",
+                  padx=10,
+                  pady=10
+                  )
+    age_label.grid(row=3, column=0)
+    username_input = Entry()
+    username_input.grid(row=1, column=1, columnspan=2, padx=10)
+    password_input = Entry()
+    password_input.grid(row=2, column=1, columnspan=2, padx=10)
+    age_input = Entry()
+    age_input.grid(row=3, column=1, columnspan=2, padx=10)
+    back = Button(window,text="Back")
+    back.config(font=("Arial", 14, "bold"),
+                fg="white",
+                bg="black",
+                activebackground="black",
+                activeforeground="white",
+                bd=3,
+                relief="raised",
+                padx=5,
+                pady=5,
+                command=lambda:[window.destroy(),askAccount()])
+    back.grid(row=4,column=0,padx=10)
+    submit = Button(window,text="Submit")
+    submit.config(font=("Arial", 14, "bold"),
+                  fg="white",
+                  bg="black",
+                  activebackground="black",
+                  activeforeground="white",
+                  bd=3,
+                  relief="raised",
+                  padx=5,
+                  pady=5,
+                  command=lambda: [create_submit(username_input,password_input,age_input,label,window)])
+    submit.grid(row=4, column=1, columnspan=2, pady=15, padx=10)
+    window.mainloop()
+
+def create_submit(username_input, password_input, age_input, label, window):
+    username = username_input.get().strip()
+    password = password_input.get().strip()
+    age = age_input.get().strip()
+    if " " in username:
+        label.config(text="There must not be spaces within the username.")
+        return
+    if username == "":
+        label.config(text="Please enter a username")
+        return
+    if username in accounts:
+        label.config(text="Username is already taken, please enter another username")
+        return
+    if password == "":
+        label.config(text="Please enter a password")
+        return
+    try:
+        age = int(age)
+        if age < MIN_AGE:
+            label.config(text=f"You cannot be younger than {MIN_AGE} years old")
             return
-        #If yes, it will proceed with askAge() function
-        elif makeaccount == "yes":
-            askAge()
-            while True:
-                #After finishing askAge() function, it will ask user to make a username
-                username = input("Enter Username : ").strip()
-                #Loops the user back if username has spaces in it
-                if " " in username:
-                    print("There must not be spaces within the username.")
-                    continue
-                #Loops the user back if username is blank
-                if username == "":
-                    print("Please enter a username")
-                    continue
-                #Loops the user back if username is already in the system
-                if username in accounts:
-                    print("Username is already taken, please enter another username")
-                    continue
-                break
-            #After meeting all the requirements, the code asks the user for the password
-            while True:
-                password = input("Enter Password : ").strip()
-                #Loops the user back if password is blank
-                if password == "":
-                    print("Please enter a password")
-                    continue
-                break
-            #Formats how the data will be saved into the external file
-            accounts[username] = [password, 0]
-            #Saves account
-            saveAccounts()
-            print("Account created successfully! Please log in.")
-            #Proceeds with login function
-            login()
+        elif age > MAX_AGE:
+            label.config(text=f"You cannot be older than {MAX_AGE} years old")
             return
-        else:
-            print("Please enter Yes or No")
+        elif username == "":
+            label.config(text="Please enter an age")
+    except ValueError:
+        label.config(text="Please enter a valid integer for age")
+        return
+
+    accounts[username] = [password, 0]
+    saveAccounts()
+    window.destroy()
+    options(username)
 
 #Log-in function
 def login():
-    #Asks user for their username
-    username = input("Enter Username: ").strip()
-    #Loops back if username is not within the system
-    while username not in accounts:
-        print("Username not found. Please try again or type 'exit' to go back.")
-        username = input("Enter Username: ").strip()
-        if username.lower() == "exit":
-            return
-    #Meets the criteria and asks the password
-    else:
-        password = input("Enter Password: ").strip()
-        #If the password matches with the associated username, it proceeds to option function
-        while accounts[username][0] == password:
-            print(f"Welcome, {username}!")
-            options(username)
-        #If the password does not match it loops back
-        else:
-            print("Incorrect password. Please try again.")
-            login()
+    window = Tk()
+    window.title("Bank Simulation Program")
+    icon = PhotoImage(file="logo.png")
+    window.iconphoto(True,icon)
+    window.configure(bg="black")
+    label = Label(window,
+                  text="Log-in",
+                  font=("Arial",12),
+                  fg="white",
+                  bg="black",
+                  padx=10,
+                  pady=10
+                  )
+    label.grid(row=0, column=0, columnspan=3, pady=10)
+    username_label = Label(window,
+                  text="Username:",
+                  font=("Arial",12),
+                  fg="white",
+                  bg="black",
+                  padx=10,
+                  pady=10
+                  )
+    username_label.grid(row=1, column=0)
+    password_label = Label(window,
+                  text="Password:",
+                  font=("Arial",12),
+                  fg="white",
+                  bg="black",
+                  padx=10,
+                  pady=10
+                  )
+    password_label.grid(row=2, column=0)
+    username_input = Entry()
+    username_input.grid(row=1, column=1, columnspan=2, padx=10)
+    password_input = Entry()
+    password_input.grid(row=2, column=1, columnspan=2, padx=10)
+    back = Button(window,text="Back")
+    back.config(font=("Arial", 14, "bold"),
+                fg="white",
+                bg="black",
+                activebackground="black",
+                activeforeground="white",
+                bd=3,
+                relief="raised",
+                padx=5,
+                pady=5,
+                command=lambda:[window.destroy(),askAccount()])
+    back.grid(row=3,column=0,pady=15)
+    submit = Button(window,text="Submit")
+    submit.config(font=("Arial", 14, "bold"),
+                  fg="white",
+                  bg="black",
+                  activebackground="black",
+                  activeforeground="white",
+                  bd=3,
+                  relief="raised",
+                  padx=20,
+                  pady=10,
+                  command=lambda: [login_submit(username_input,password_input,label,window)])
+    submit.grid(row=3, column=1, columnspan=2, pady=15, padx=10)
+    window.mainloop()
+
+def login_submit(username_input, password_input, label, window):
+    username = username_input.get().strip()
+    password = password_input.get().strip()
+    if username not in accounts:
+        label.config(text="Username not found")
+        return
+    if username == "":
+        label.config(text="Please enter a username")
+        return
+    if accounts[username][0] != password:
+        label.config(text="Incorrect password. Please try again.")
+        return
+    if password == "":
+        label.config(text="Please enter a password")
+        return
+    window.destroy()
+    options(username)
 
 #Option choosing function
 def options(username):
-    while True:
-        try:
-            #Displays all the options the user can make
-            print("---------------------------------------------------")
-            print(
-                "1 - Show Balance\n" 
-                "2 - Deposit\n" 
-                "3 - Withdraw\n" 
-                "4 - Show Transactions\n" 
-                "5 - Exit")
-            select = int(input("Please choose an option :"))
-            #If statements for which option the user chooses
-            if select == 1:
-                print("---------------------------------------------------")
-                print("You have chosen to check your balance")
-                showBalance(username)
-            elif select == 2:
-                print("---------------------------------------------------")
-                print("You have chosen to deposit")
-                showBalance(username)
-                deposit(username) 
-            elif select == 3:
-                print("---------------------------------------------------")
-                print("You have chosen to withdraw")
-                showBalance(username)
-                withdraw(username)  
-            elif select == 4:
-                print("---------------------------------------------------")
-                print("You have chosen to check your transactions")
-                showTransactions(username) 
-            elif select == 5:
-                print("---------------------------------------------------")
-                print("You have chosen to exit")  
-                exit()   
-            else:
-                #Loops back if user inputs something that is not an option
-                print("Please enter an option 1 - 5")
-        except ValueError:
-            #Loops back if input is not an integer
-            print("Please enter an option 1 - 5")
-
+    window = Tk()
+    window.title("Bank Options")
+    window.configure(bg="black")
+    label = Label(window, 
+                text=f"Welcome, {username}!\nChoose an option:",
+                font=("Arial", 14, "bold"),
+                fg="white",
+                bg="black",
+                pady=10)
+    label.pack(pady=10)
+    balance_button = Button(window, text="Show Balance")
+    balance_button.config(font=("Arial", 12, "bold"),
+                          fg="white",
+                          bg="black",
+                          activebackground="black",
+                          activeforeground="white",
+                          bd=3,
+                          relief="raised",
+                          width=20,
+                          command=lambda: [showBalance(username)])
+    balance_button.pack(padx=5,pady=5)
+    deposit_button = Button(window, text="Deposit")
+    deposit_button.config(font=("Arial", 12, "bold"),
+                          fg="white",
+                          bg="black",
+                          activebackground="black",
+                          activeforeground="white",
+                          bd=3,
+                          relief="raised",
+                          width=20,
+                          command=lambda: [deposit(username)])
+    deposit_button.pack(padx=5,pady=5)
+    withdraw_button = Button(window, text="Withdraw")
+    withdraw_button.config(font=("Arial", 12, "bold"),
+                          fg="white",
+                          bg="black",
+                          activebackground="black",
+                          activeforeground="white",
+                          bd=3,
+                          relief="raised",
+                          width=20,
+                          command=lambda: [withdraw(username)])
+    withdraw_button.pack(padx=5,pady=5)
+    transactions_button = Button(window, text="Show Transactions")
+    transactions_button.config(font=("Arial", 12, "bold"),
+                          fg="white",
+                          bg="black",
+                          activebackground="black",
+                          activeforeground="white",
+                          bd=3,
+                          relief="raised",
+                          width=20,
+                          command=lambda: [showTransactions(username)])
+    transactions_button.pack(padx=5,pady=5)
+    exit_button = Button(window, text="Exit")
+    exit_button.config(font=("Arial", 12, "bold"),
+                          fg="white",
+                          bg="black",
+                          activebackground="black",
+                          activeforeground="white",
+                          bd=3,
+                          relief="raised",
+                          width=20,
+                          command=exit)
+    exit_button.pack(padx=5,pady=5)
+    window.mainloop()
+    
 #Withdrawing money function
 def withdraw(username):
-    #Checks if the user balance is = 0 if so returns back to the option menu
-    if accounts[username][1] == 0:
-        print("You cannot make any withdrawals as your bank balance is at $0")
-        return
-    #Variable for the transaction function to identify the action
-    action = "Withdraw"
-    while True:
+    def process_withdraw():
         try:
-            #Asks for how much the user wants to withdraw
-            amount = float(input("Enter amount to withdraw: $"))
-            #Loops back if amount is less than 0
+            amount = float(amount_input.get())
             if amount <= 0:
-                print("Please enter a positive amount.")
-                continue
-            #Loops back if amount is more than the current balance
-            elif accounts[username][1]< amount:
-                print("You cannot withdraw more than your balance")
-                continue
-            #If amount is less than the current balance 
-            elif accounts[username][1]>= amount:
-                #Actual process where the balance is being subtracted
-                accounts[username][1] -= amount
-                #Renews the account balance 
-                saveAccounts()
-                print(f"${amount:.2f} withdrawed. New balance: ${accounts[username][1]:.2f}")
-                timeNow()
-                #Saves this transaction to the external file
-                saveTransactions(username, action, amount, TIME)
-            break
+                label.config(text=f"Please enter a positive amount.\n Current Balance : ${accounts[username][1]:.2f}")
+                return
+            if accounts[username][1] < amount:
+                label.config(text=f"You cannot withdraw more than your balance.\n Current Balance : ${accounts[username][1]:.2f}")
+                return
+            accounts[username][1] -= amount
+            saveAccounts()
+            timeNow()
+            saveTransactions(username, "Withdraw", amount, TIME)
+            window.destroy()
+            result_window = Toplevel()
+            result_window.title("Withdraw Complete")
+            result_window.configure(bg="black")
+            result_label = Label(result_window,
+                                 text=f"${amount:.2f} withdrawn.\nNew balance: ${accounts[username][1]:.2f}",
+                                 font=("Arial", 12),
+                                 fg="white",
+                                 bg="black")
+            result_label.pack(pady=10)
+            result_label.pack()
+            next = Button(result_window, text="Next")
+            next.config(font=("Arial", 12, "bold"),
+                        fg="white",
+                        bg="black",
+                        activebackground="black",
+                        activeforeground="white",
+                        bd=3,
+                        relief="raised",
+                        command=result_window.destroy)
+            next.pack(pady=5)
+            result_window.mainloop()
+
         except ValueError:
-            #Prints this if the input is not a number
-            print("Please enter a valid number.")
+            label.config(text="Please enter a valid number.")
+    window = Toplevel()
+    window.title("Withdraw")
+    window.configure(bg="black")
+    label = Label(window, text=f"Enter amount to withdraw: \n Current Balance : ${accounts[username][1]:.2f}", 
+                  font=("Arial", 12), fg="white", bg="black")
+    label.grid(row=0,column=0,columnspan=2,pady=5)
+    amount_input = Entry(window, font=("Arial", 12))
+    amount_input.grid(row=1,column=0,columnspan=2,pady=5,padx=5)
+    withdraw = Button(window,text="Withdraw")
+    withdraw.config(font=("Arial", 12, "bold"),
+                    fg="white",
+                    bg="black",
+                    activebackground="black",
+                    activeforeground="white",
+                    bd=3,
+                    relief="raised",
+                    command=process_withdraw)
+    withdraw.grid(row=2,column=0,pady=5)
+    back = Button(window,text="Back")
+    back.config(font=("Arial", 12, "bold"),
+                fg="white",
+                bg="black",
+                activebackground="black",
+                activeforeground="white",
+                bd=3,
+                relief="raised",
+                command=window.destroy)
+    back.grid(row=2,column=1,pady=5)
+    window.mainloop()
 
 #Depositing money function
 def deposit(username):
-    #Variable for the transaction function to identify the action
-    action = "Deposit"
-    while True:
+    def process_deposit():
         try:
-            #Asks for how much the user wants to deposit
-            amount = float(input("Enter amount to deposit: $"))
-            #Loops back if amount is less than 0
+            amount = float(amount_input.get())
             if amount <= 0:
-                print("Please enter a positive amount.")
-                continue
-            #Process for adding the amount to the balance
+                label.config(text="Please enter a positive amount.")
+                return
             accounts[username][1] += amount
-            #Renews the account balance 
             saveAccounts()
-            print(f"${amount:.2f} deposited. New balance: ${accounts[username][1]:.2f}")
             timeNow()
-            #Saves this transaction to the external file
-            saveTransactions(username, action, amount, TIME)
-            break
+            saveTransactions(username, "Withdraw", amount, TIME)
+            window.destroy()
+            result_window = Toplevel()
+            result_window.title("Deposit Complete")
+            result_window.configure(bg="black")
+            result_label = Label(result_window,
+                                 text=f"${amount:.2f} deposited.\nNew balance: ${accounts[username][1]:.2f}",
+                                 font=("Arial", 12),
+                                 fg="white",
+                                 bg="black")
+            result_label.pack(pady=10)
+            result_label.pack()
+            next = Button(result_window,text="Next")
+            next.config(font=("Arial", 12, "bold"),
+                        fg="white",
+                        bg="black",
+                        activebackground="black",
+                        activeforeground="white",
+                        bd=3,
+                        relief="raised",
+                        command=result_window.destroy)
+            next.pack(pady=5)
+            result_window.mainloop()
+
         except ValueError:
-            #Prints this if the input is not a number
-            print("Please enter a valid number.")
+            label.config(text="Please enter a valid number.")
+    window = Toplevel()
+    window.title("Deposit")
+    window.configure(bg="black")
+    label = Label(window, text="Enter amount to deposit:", font=("Arial", 12), fg="white", bg="black")
+    label.grid(row=0,column=0,columnspan=2,pady=5)
+    amount_input = Entry(window, font=("Arial", 12))
+    amount_input.grid(row=1,column=0,columnspan=2,pady=5,padx=5)
+    deposit = Button(window,text="Deposit")
+    deposit.config(font=("Arial", 12, "bold"),
+                   fg="white",
+                   bg="black",
+                   activebackground="black",
+                   activeforeground="white",
+                   bd=3,
+                   relief="raised",
+                   command=process_deposit)
+    deposit.grid(row=2,column=0,pady=5)
+    back = Button(window,text="Back",)
+    back.config(font=("Arial", 12, "bold"),
+                fg="white",
+                bg="black",
+                activebackground="black",
+                activeforeground="white",
+                bd=3,
+                relief="raised",
+                command=window.destroy)
+    back.grid(row=2,column=1,pady=5)
+    window.mainloop()
 
 #
 def loadTransactions():
@@ -308,16 +505,29 @@ def loadTransactions():
     except (FileNotFoundError, json.decoder.JSONDecodeError):
         transactions = {}
 
-#Shows transactions function
 def showTransactions(username):
-    #Checks if there is an existing transaction for the username
+    window = Toplevel()
+    window.title("Transactions")
+    window.configure(bg="black")
+    label = Label(window, text="Your transactions:", font=("Arial", 14, "bold"), fg="white", bg="black")
+    label.pack(pady=10)
     if username in transactions and transactions[username]:
-        print("Your transactions:")
         for t in transactions[username]:
-            print(f"{t["time"]} {t["action"]}: ${t["amount"]:.2f}")
+            label = Label(window, text=f"{t['time']} {t['action']}: ${t['amount']:.2f}",
+                  font=("Arial", 12), fg="white", bg="black")
+            label.pack(padx=20)
     else:
-        #Prints this if no exisitng transactions are found
-        print("No transactions found.")
+        label = Label(window, text="No transactions found.", font=("Arial", 12), fg="red", bg="black")
+        label.pack()
+    back = Button(window, text="Back")
+    back.config(fg="white",
+                bg="black",
+                font=("Arial",15),
+                activebackground="white",
+                activeforeground="black",
+                command=window.destroy)
+    back.pack(pady=10)
+    window.mainloop()
 
 #Saves transaction function
 def saveTransactions(username, action, amount, TIME):
@@ -334,24 +544,55 @@ def saveTransactions(username, action, amount, TIME):
 
 #Show balance function
 def showBalance(username):
+    window = Tk()
+    window.title("Balance")
+    window.configure(bg="black")
     balance = accounts[username][1]
-    #Displays balance
-    print(f"Your balance is [${balance}]")
+    label = Label(window, text=f"Your balance is: ${balance:.2f}",
+          font=("Arial", 14), fg="white", bg="black", pady=20)
+    label.pack(padx=5)
+    back = Button(window, text="Back")
+    back.config(fg="white",
+                bg="black",
+                font=("Arial",15),
+                activebackground="white",
+                activeforeground="black",
+                command=window.destroy)
+    back.pack(pady=10)
+    window.mainloop()
 
 #Exit function
 def exit():
-    while True:
-        #Asks user if they want to exit
-        exit_option = input("Would you like to exit? (Yes/No) ").lower().strip()
-        #Ends the code if input is yes
-        if exit_option == "yes":
-            quit()
-        #Returns to previous operations if input is no
-        elif exit_option == "no":
-            return
-        else: 
-            #Prints this if input is neither yes or no
-            print("Please enter Yes or No")
+    window = Toplevel()
+    window.title("Bank Simulation Program")
+    icon = PhotoImage(file="logo.png")
+    window.iconphoto(True,icon)
+    window.configure(bg="black")
+    label = Label(window,
+                  text="Would you like to exit? (Yes/No)",
+                  font=("Arial",12),
+                  fg="white",
+                  bg="black",
+                  padx=10,
+                  pady=10)
+    label.grid(row=0, column=0, columnspan=2, padx=10, pady=10)
+    yes = Button(window, text="Yes")
+    yes.config(command=quit,
+                fg="white",
+                bg="black",
+                font=("Arial",15),
+                activebackground="white",
+                activeforeground="black")
+    yes.grid(row=1, column=0, padx=10, pady=10)
+    no = Button(window, text="No")
+    no.config(command=window.destroy,
+                fg="white",
+                bg="black",
+                font=("Arial",15),
+                activebackground="white",
+                activeforeground="black")
+    no.grid(row=1, column=1, padx=10, pady=10)
+    window.mainloop()
 
 #Loads all of the transactions when the code starts
 loadTransactions()   
