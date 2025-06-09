@@ -1,4 +1,9 @@
-Hello, this is a Bank Simulation Program.
-You are able to create accounts, deposit/withdraw amounts
-from your bank balance, view your transaction history and your bank
-balance. (Currency : NZD)
+Hello! Welcome to the Bank Simulation Program.
+In this program, you can:
+ - Create accounts
+ - Deposit and withdraw funds from your bank balance
+ - View your transaction history
+ - Check your bank balance
+(Currency: NZD)
+
+Please note: Users must be between 13 and 18 years old.
