@@ -464,6 +464,9 @@ def deposit(username):
             if amount <= 0:
                 label.config(text="Please enter a positive amount.")
                 return
+            if amount > 1000000:
+                label.config(text="You cannot deposit more than $1,000,000 at once")
+                return
             accounts[username][1] += amount
             saveAccounts()
             timeNow()
