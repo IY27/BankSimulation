@@ -139,13 +139,24 @@ def createAccount():
                   padx=10,
                   pady=10
                   )
-    age_label.grid(row=3, column=0)
     username_input = Entry()
     username_input.grid(row=1, column=1, columnspan=2, padx=10)
-    password_input = Entry()
+    password_input = Entry(show="*")
     password_input.grid(row=2, column=1, columnspan=2, padx=10)
+    check_label = Label(window,
+                  text="Confirm Password:",
+                  font=("Arial",12),
+                  fg="white",
+                  bg="black",
+                  padx=10,
+                  pady=10
+                  )
+    check_label.grid(row=3, column=0)
+    check_input = Entry(show="*")
+    check_input.grid(row=3, column=1, columnspan=2, padx=10)
+    age_label.grid(row=4, column=0)
     age_input = Entry()
-    age_input.grid(row=3, column=1, columnspan=2, padx=10)
+    age_input.grid(row=4, column=1, columnspan=2, padx=10)
     back = Button(window,text="Back")
     back.config(font=("Arial", 14, "bold"),
                 fg="white",
@@ -157,7 +168,7 @@ def createAccount():
                 padx=5,
                 pady=5,
                 command=lambda:[window.destroy(),askAccount()])
-    back.grid(row=4,column=0,padx=10)
+    back.grid(row=5,column=0,padx=10)
     submit = Button(window,text="Submit")
     submit.config(font=("Arial", 14, "bold"),
                   fg="white",
@@ -168,13 +179,14 @@ def createAccount():
                   relief="raised",
                   padx=5,
                   pady=5,
-                  command=lambda: [create_submit(username_input,password_input,age_input,label,window)])
-    submit.grid(row=4, column=1, columnspan=2, pady=15, padx=10)
+                  command=lambda: [create_submit(username_input,password_input,age_input,label,check_input,window)])
+    submit.grid(row=5, column=1, columnspan=2, pady=15, padx=10)
     window.mainloop()
 
-def create_submit(username_input, password_input, age_input, label, window):
+def create_submit(username_input, password_input, age_input, label,check_input, window):
     username = username_input.get().strip()
     password = password_input.get().strip()
+    check = check_input.get()
     age = age_input.get().strip()
     if " " in username:
         label.config(text="There must not be spaces within the username.")
@@ -187,6 +199,9 @@ def create_submit(username_input, password_input, age_input, label, window):
         return
     if password == "":
         label.config(text="Please enter a password")
+        return
+    if check != password:
+        label.config(text="Both passwords are not the same")
         return
     try:
         age = int(age)
@@ -243,7 +258,7 @@ def login():
     password_label.grid(row=2, column=0)
     username_input = Entry()
     username_input.grid(row=1, column=1, columnspan=2, padx=10)
-    password_input = Entry()
+    password_input = Entry(show="*")
     password_input.grid(row=2, column=1, columnspan=2, padx=10)
     back = Button(window,text="Back")
     back.config(font=("Arial", 14, "bold"),
@@ -452,7 +467,7 @@ def deposit(username):
             accounts[username][1] += amount
             saveAccounts()
             timeNow()
-            saveTransactions(username, "Withdraw", amount, TIME)
+            saveTransactions(username, "Deposit", amount, TIME)
             window.destroy()
             result_window = Toplevel()
             result_window.title("Deposit Complete")
