@@ -345,6 +345,17 @@ def options(username):
                           width=20,
                           command=lambda: [showTransactions(username)])
     transactions_button.pack(padx=5,pady=5)
+    logout_button = Button(window, text="Log-out")
+    logout_button.config(font=("Arial", 12, "bold"),
+                          fg="white",
+                          bg="black",
+                          activebackground="black",
+                          activeforeground="white",
+                          bd=3,
+                          relief="raised",
+                          width=20,
+                          command=lambda: [logout(window)])
+    logout_button.pack(padx=5,pady=5)
     exit_button = Button(window, text="Exit")
     exit_button.config(font=("Arial", 12, "bold"),
                           fg="white",
@@ -550,7 +561,7 @@ def saveTransactions(username, action, amount, TIME):
 
 #Show balance function
 def showBalance(username):
-    window = Tk()
+    window = Toplevel()
     window.transient()  
     window.grab_set()   
     window.title("Balance")
@@ -568,6 +579,40 @@ def showBalance(username):
                 command=window.destroy)
     back.pack(pady=10)
     window.mainloop()
+
+#Log out function 
+def logout(window):
+    confirm_window = Toplevel()
+    confirm_window.transient()  
+    confirm_window.grab_set()   
+    confirm_window.title("Bank Simulation Program")
+    icon = PhotoImage(file="logo.png")
+    confirm_window.iconphoto(True,icon)
+    confirm_window.configure(bg="black")
+    label = Label(confirm_window,
+                  text="Would you like to Log-out? (Yes/No)",
+                  font=("Arial",12),
+                  fg="white",
+                  bg="black",
+                  padx=10,
+                  pady=10)
+    label.grid(row=0, column=0, columnspan=2, padx=10, pady=10)
+    yes = Button(confirm_window, text="Yes")
+    yes.config(command=lambda: [confirm_window.destroy(),window.destroy(),askAccount()],
+                fg="white",
+                bg="black",
+                font=("Arial",15),
+                activebackground="white",
+                activeforeground="black")
+    yes.grid(row=1, column=0, padx=10, pady=10)
+    no = Button(confirm_window, text="No")
+    no.config(command=confirm_window.destroy,
+                fg="white",
+                bg="black",
+                font=("Arial",15),
+                activebackground="white",
+                activeforeground="black")
+    no.grid(row=1, column=1, padx=10, pady=10)
 
 #Exit function
 def exit():
