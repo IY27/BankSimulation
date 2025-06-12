@@ -280,10 +280,10 @@ def login():
                   activeforeground="white",
                   bd=3,
                   relief="raised",
-                  padx=20,
-                  pady=10,
+                  padx=5,
+                  pady=5,
                   command=lambda: [login_submit(username_input,password_input,label,window)])
-    submit.grid(row=3, column=1, columnspan=2, pady=15, padx=10)
+    submit.grid(row=3, column=1, pady=15, padx=25)
     window.mainloop()
 
 def login_submit(username_input, password_input, label, window):
@@ -498,7 +498,11 @@ def deposit(username):
     window.grab_set()   
     window.title("Deposit")
     window.configure(bg="black")
-    label = Label(window, text="Enter amount to deposit:", font=("Arial", 12), fg="white", bg="black")
+    label = Label(window, 
+                  text="Enter amount to deposit:", 
+                  font=("Arial", 12), 
+                  fg="white", 
+                  bg="black")
     label.grid(row=0,column=0,columnspan=2,pady=5)
     amount_input = Entry(window, font=("Arial", 12))
     amount_input.grid(row=1,column=0,columnspan=2,pady=5,padx=5)
@@ -541,23 +545,35 @@ def showTransactions(username):
     window.grab_set()   
     window.title("Transactions")
     window.configure(bg="black")
-    label = Label(window, text="Your transactions:", font=("Arial", 14, "bold"), fg="white", bg="black")
-    label.pack(pady=10)
+    label = Label(window, text="Transactions", 
+                  font=("Arial", 12), 
+                  fg="white", 
+                  bg="black",
+                  pady=10)
+    label.pack()
+    frame = Frame(window, bg="black")
+    frame.pack()
+    scrollbar = Scrollbar(frame)
+    scrollbar.pack(side=RIGHT, fill=Y)
+    listbox = Listbox(frame, 
+                      yscrollcommand=scrollbar.set, 
+                      font=("Arial", 12), 
+                      fg="white", 
+                      bg="black", 
+                      width=50)
     if username in transactions and transactions[username]:
         for t in transactions[username]:
-            label = Label(window, text=f"{t['time']} {t['action']}: ${t['amount']:.2f}",
-                  font=("Arial", 12), fg="white", bg="black")
-            label.pack(padx=20)
+            listbox.insert(END, f"{t['time']} {t['action']}: ${t['amount']:.2f}")
     else:
-        label = Label(window, text="No transactions found.", font=("Arial", 12), fg="red", bg="black")
-        label.pack()
-    back = Button(window, text="Back")
-    back.config(fg="white",
-                bg="black",
-                font=("Arial",15),
-                activebackground="white",
-                activeforeground="black",
-                command=window.destroy)
+        listbox.insert(END, "No transactions found.")
+    listbox.pack()
+    scrollbar.config(command=listbox.yview)
+    back = Button(window, 
+                  text="Back", 
+                  command=window.destroy, 
+                  fg="white", 
+                  bg="black", 
+                  font=("Arial",15))
     back.pack(pady=10)
     window.mainloop()
 
@@ -628,6 +644,7 @@ def logout(window):
                 activebackground="white",
                 activeforeground="black")
     no.grid(row=1, column=1, padx=10, pady=10)
+    confirm_window.mainloop()
 
 #Exit function
 def exit():
