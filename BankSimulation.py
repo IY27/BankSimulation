@@ -399,6 +399,8 @@ def withdraw(username):
         except ValueError:
             label.config(text="Please enter a valid number.")
     window = Toplevel()
+    window.transient()  
+    window.grab_set()   
     window.title("Withdraw")
     window.configure(bg="black")
     label = Label(window, text=f"Enter amount to withdraw: \n Current Balance : ${accounts[username][1]:.2f}", 
@@ -466,6 +468,8 @@ def deposit(username):
         except ValueError:
             label.config(text="Please enter a valid number.")
     window = Toplevel()
+    window.transient()  
+    window.grab_set()   
     window.title("Deposit")
     window.configure(bg="black")
     label = Label(window, text="Enter amount to deposit:", font=("Arial", 12), fg="white", bg="black")
@@ -507,6 +511,8 @@ def loadTransactions():
 
 def showTransactions(username):
     window = Toplevel()
+    window.transient()  
+    window.grab_set()   
     window.title("Transactions")
     window.configure(bg="black")
     label = Label(window, text="Your transactions:", font=("Arial", 14, "bold"), fg="white", bg="black")
@@ -545,6 +551,8 @@ def saveTransactions(username, action, amount, TIME):
 #Show balance function
 def showBalance(username):
     window = Tk()
+    window.transient()  
+    window.grab_set()   
     window.title("Balance")
     window.configure(bg="black")
     balance = accounts[username][1]
@@ -564,6 +572,8 @@ def showBalance(username):
 #Exit function
 def exit():
     window = Toplevel()
+    window.transient()  
+    window.grab_set()   
     window.title("Bank Simulation Program")
     icon = PhotoImage(file="logo.png")
     window.iconphoto(True,icon)

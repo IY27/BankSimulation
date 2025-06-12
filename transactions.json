@@ -1,0 +1,14 @@
+{
+  "user1": [
+    {
+      "time": "Thu Jun 12 18:57:13 2025",
+      "action": "Withdraw",
+      "amount": 2000.0
+    },
+    {
+      "time": "Thu Jun 12 18:57:16 2025",
+      "action": "Withdraw",
+      "amount": 13.0
+    }
+  ]
+}
