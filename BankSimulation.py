@@ -10,6 +10,15 @@ def timeNow():
 accounts = {}
 transactions = {}
 
+def styled_button(parent, text, command):
+    return Button(parent, text=text, command=command,
+                  font=("Arial", 14, "bold"),
+                  fg="white",
+                  bg="black",
+                  activebackground="black",
+                  activeforeground="white",
+                  bd=3, relief="raised")
+
 #Saves account details into accounts.json file
 def saveAccounts():
     with open("accounts.json", "w") as accountfile: 
@@ -48,15 +57,8 @@ def description():
                   pady=10
                   )
     label.pack()
-    button = Button(window,text="Next")
-    button.config(command=lambda: [window.destroy(), askAccount()],
-                  fg="white",
-                  bg="black",
-                  font=("Arial",15),
-                  activebackground="white",
-                  activeforeground="black"
-                  )
-    button.pack(padx=10,pady=10)
+    next = styled_button(window, "Next", lambda: [window.destroy(), askAccount()])
+    next.pack(padx=10,pady=10)
     window.mainloop()
 
 #Asks if the user have a bank account
@@ -66,30 +68,12 @@ def askAccount():
     icon = PhotoImage(file="logo.png")
     window.iconphoto(True,icon)
     window.configure(bg="black")
-    button1 = Button(window, text="Login")
-    button1.config(command=lambda: [window.destroy(), login()],
-                fg="white",
-                bg="black",
-                font=("Arial",15),
-                activebackground="white",
-                activeforeground="black")
-    button1.grid(row=0, column=0, padx=10, pady=10)
-    button2 = Button(window, text="Create Account")
-    button2.config(command=lambda: [window.destroy(), createAccount()],
-                fg="white",
-                bg="black",
-                font=("Arial",15),
-                activebackground="white",
-                activeforeground="black")
-    button2.grid(row=0, column=1, padx=10, pady=10)
-    button3 = Button(window, text="Exit")
-    button3.config(command= exit,
-                fg="white",
-                bg="black",
-                font=("Arial",15),
-                activebackground="white",
-                activeforeground="black")
-    button3.grid(row=0, column=2, padx=10, pady=10)
+    login_button = styled_button(window, "Login", lambda: [window.destroy(), login()])
+    login_button.grid(row=0, column=0, padx=10, pady=10)
+    create = styled_button(window, "Create Account", lambda: [window.destroy(), createAccount()])
+    create.grid(row=0, column=1, padx=10, pady=10)
+    exit = styled_button(window, "Exit", exit_function)
+    exit.grid(row=0, column=2, padx=10, pady=10)
     window.mainloop()
     
 
@@ -157,29 +141,9 @@ def createAccount():
     age_label.grid(row=4, column=0)
     age_input = Entry()
     age_input.grid(row=4, column=1, columnspan=2, padx=10)
-    back = Button(window,text="Back")
-    back.config(font=("Arial", 14, "bold"),
-                fg="white",
-                bg="black",
-                activebackground="black",
-                activeforeground="white",
-                bd=3,
-                relief="raised",
-                padx=5,
-                pady=5,
-                command=lambda:[window.destroy(),askAccount()])
+    back = styled_button(window, "Back", lambda:[window.destroy(),askAccount()])
     back.grid(row=5,column=0,padx=10)
-    submit = Button(window,text="Submit")
-    submit.config(font=("Arial", 14, "bold"),
-                  fg="white",
-                  bg="black",
-                  activebackground="black",
-                  activeforeground="white",
-                  bd=3,
-                  relief="raised",
-                  padx=5,
-                  pady=5,
-                  command=lambda: [create_submit(username_input,password_input,age_input,label,check_input,window)])
+    submit = styled_button(window, "Submit", lambda: [create_submit(username_input,password_input,age_input,label,check_input,window)])
     submit.grid(row=5, column=1, columnspan=2, pady=15, padx=10)
     window.mainloop()
 
@@ -188,13 +152,13 @@ def create_submit(username_input, password_input, age_input, label,check_input, 
     password = password_input.get().strip()
     check = check_input.get()
     age = age_input.get().strip()
-    if " " in username:
-        label.config(text="There must not be spaces within the username.")
-        return
     if username == "":
         label.config(text="Please enter a username")
         return
-    if username in accounts:
+    elif " " in username:
+        label.config(text="There must not be spaces within the username.")
+        return
+    elif username in accounts:
         label.config(text="Username is already taken, please enter another username")
         return
     if password == "":
@@ -260,46 +224,26 @@ def login():
     username_input.grid(row=1, column=1, columnspan=2, padx=10)
     password_input = Entry(show="*")
     password_input.grid(row=2, column=1, columnspan=2, padx=10)
-    back = Button(window,text="Back")
-    back.config(font=("Arial", 14, "bold"),
-                fg="white",
-                bg="black",
-                activebackground="black",
-                activeforeground="white",
-                bd=3,
-                relief="raised",
-                padx=5,
-                pady=5,
-                command=lambda:[window.destroy(),askAccount()])
+    back = styled_button(window, "Back", lambda:[window.destroy(),askAccount()])
     back.grid(row=3,column=0,pady=15)
-    submit = Button(window,text="Submit")
-    submit.config(font=("Arial", 14, "bold"),
-                  fg="white",
-                  bg="black",
-                  activebackground="black",
-                  activeforeground="white",
-                  bd=3,
-                  relief="raised",
-                  padx=5,
-                  pady=5,
-                  command=lambda: [login_submit(username_input,password_input,label,window)])
+    submit = styled_button(window, "Submit", lambda:[login_submit(username_input,password_input,label,window)])
     submit.grid(row=3, column=1, pady=15, padx=25)
     window.mainloop()
 
 def login_submit(username_input, password_input, label, window):
     username = username_input.get().strip()
     password = password_input.get().strip()
-    if username not in accounts:
-        label.config(text="Username not found")
-        return
     if username == "":
         label.config(text="Please enter a username")
         return
-    if accounts[username][0] != password:
-        label.config(text="Incorrect password. Please try again.")
+    elif username not in accounts:
+        label.config(text="Username not found")
         return
     if password == "":
         label.config(text="Please enter a password")
+        return
+    elif accounts[username][0] != password:
+        label.config(text="Incorrect password. Please try again.")
         return
     window.destroy()
     options(username)
@@ -316,71 +260,17 @@ def options(username):
                 bg="black",
                 pady=10)
     label.pack(pady=10)
-    balance_button = Button(window, text="Show Balance")
-    balance_button.config(font=("Arial", 12, "bold"),
-                          fg="white",
-                          bg="black",
-                          activebackground="black",
-                          activeforeground="white",
-                          bd=3,
-                          relief="raised",
-                          width=20,
-                          command=lambda: [showBalance(username)])
+    balance_button = styled_button(window, "Show Balance", lambda:[showBalance(username)])
     balance_button.pack(padx=5,pady=5)
-    deposit_button = Button(window, text="Deposit")
-    deposit_button.config(font=("Arial", 12, "bold"),
-                          fg="white",
-                          bg="black",
-                          activebackground="black",
-                          activeforeground="white",
-                          bd=3,
-                          relief="raised",
-                          width=20,
-                          command=lambda: [deposit(username)])
+    deposit_button = styled_button(window, "Deposit", lambda:[deposit(username)])
     deposit_button.pack(padx=5,pady=5)
-    withdraw_button = Button(window, text="Withdraw")
-    withdraw_button.config(font=("Arial", 12, "bold"),
-                          fg="white",
-                          bg="black",
-                          activebackground="black",
-                          activeforeground="white",
-                          bd=3,
-                          relief="raised",
-                          width=20,
-                          command=lambda: [withdraw(username)])
+    withdraw_button = styled_button(window, "Withdraw", lambda:[withdraw(username)])
     withdraw_button.pack(padx=5,pady=5)
-    transactions_button = Button(window, text="Show Transactions")
-    transactions_button.config(font=("Arial", 12, "bold"),
-                          fg="white",
-                          bg="black",
-                          activebackground="black",
-                          activeforeground="white",
-                          bd=3,
-                          relief="raised",
-                          width=20,
-                          command=lambda: [showTransactions(username)])
+    transactions_button = styled_button(window, "Show Transactions", lambda:[showTransactions(username)])
     transactions_button.pack(padx=5,pady=5)
-    logout_button = Button(window, text="Log-out")
-    logout_button.config(font=("Arial", 12, "bold"),
-                          fg="white",
-                          bg="black",
-                          activebackground="black",
-                          activeforeground="white",
-                          bd=3,
-                          relief="raised",
-                          width=20,
-                          command=lambda: [logout(window)])
+    logout_button = styled_button(window, "Log-out", lambda:[logout(window)])
     logout_button.pack(padx=5,pady=5)
-    exit_button = Button(window, text="Exit")
-    exit_button.config(font=("Arial", 12, "bold"),
-                          fg="white",
-                          bg="black",
-                          activebackground="black",
-                          activeforeground="white",
-                          bd=3,
-                          relief="raised",
-                          width=20,
-                          command=exit)
+    exit_button = styled_button(window, "Exit", exit_function)
     exit_button.pack(padx=5,pady=5)
     window.mainloop()
     
@@ -410,15 +300,7 @@ def withdraw(username):
                                  bg="black")
             result_label.pack(pady=10)
             result_label.pack()
-            next = Button(result_window, text="Next")
-            next.config(font=("Arial", 12, "bold"),
-                        fg="white",
-                        bg="black",
-                        activebackground="black",
-                        activeforeground="white",
-                        bd=3,
-                        relief="raised",
-                        command=result_window.destroy)
+            next = styled_button(result_window, "Next", result_window.destroy)
             next.pack(pady=5)
             result_window.mainloop()
 
@@ -434,25 +316,9 @@ def withdraw(username):
     label.grid(row=0,column=0,columnspan=2,pady=5)
     amount_input = Entry(window, font=("Arial", 12))
     amount_input.grid(row=1,column=0,columnspan=2,pady=5,padx=5)
-    withdraw = Button(window,text="Withdraw")
-    withdraw.config(font=("Arial", 12, "bold"),
-                    fg="white",
-                    bg="black",
-                    activebackground="black",
-                    activeforeground="white",
-                    bd=3,
-                    relief="raised",
-                    command=process_withdraw)
+    withdraw = styled_button(window, "Withdraw", process_withdraw)
     withdraw.grid(row=2,column=0,pady=5)
-    back = Button(window,text="Back")
-    back.config(font=("Arial", 12, "bold"),
-                fg="white",
-                bg="black",
-                activebackground="black",
-                activeforeground="white",
-                bd=3,
-                relief="raised",
-                command=window.destroy)
+    back = styled_button(window, "Back", window.destroy)
     back.grid(row=2,column=1,pady=5)
     window.mainloop()
 
@@ -482,15 +348,7 @@ def deposit(username):
                                  bg="black")
             result_label.pack(pady=10)
             result_label.pack()
-            next = Button(result_window,text="Next")
-            next.config(font=("Arial", 12, "bold"),
-                        fg="white",
-                        bg="black",
-                        activebackground="black",
-                        activeforeground="white",
-                        bd=3,
-                        relief="raised",
-                        command=result_window.destroy)
+            next = styled_button(result_window, "Next", result_window.destroy)
             next.pack(pady=5)
             result_window.mainloop()
 
@@ -509,25 +367,9 @@ def deposit(username):
     label.grid(row=0,column=0,columnspan=2,pady=5)
     amount_input = Entry(window, font=("Arial", 12))
     amount_input.grid(row=1,column=0,columnspan=2,pady=5,padx=5)
-    deposit = Button(window,text="Deposit")
-    deposit.config(font=("Arial", 12, "bold"),
-                   fg="white",
-                   bg="black",
-                   activebackground="black",
-                   activeforeground="white",
-                   bd=3,
-                   relief="raised",
-                   command=process_deposit)
+    deposit = styled_button(window, "Deposit", process_deposit)
     deposit.grid(row=2,column=0,pady=5)
-    back = Button(window,text="Back",)
-    back.config(font=("Arial", 12, "bold"),
-                fg="white",
-                bg="black",
-                activebackground="black",
-                activeforeground="white",
-                bd=3,
-                relief="raised",
-                command=window.destroy)
+    back = styled_button(window, "Back", window.destroy)
     back.grid(row=2,column=1,pady=5)
     window.mainloop()
 
@@ -571,12 +413,7 @@ def showTransactions(username):
         listbox.insert(END, "No transactions found.")
     listbox.pack()
     scrollbar.config(command=listbox.yview)
-    back = Button(window, 
-                  text="Back", 
-                  command=window.destroy, 
-                  fg="white", 
-                  bg="black", 
-                  font=("Arial",15))
+    back = styled_button(window, "Back", window.destroy)
     back.pack(pady=10)
     window.mainloop()
 
@@ -604,13 +441,7 @@ def showBalance(username):
     label = Label(window, text=f"Your balance is: ${balance:.2f}",
           font=("Arial", 14), fg="white", bg="black", pady=20)
     label.pack(padx=5)
-    back = Button(window, text="Back")
-    back.config(fg="white",
-                bg="black",
-                font=("Arial",15),
-                activebackground="white",
-                activeforeground="black",
-                command=window.destroy)
+    back = styled_button(window, "Back", window.destroy)
     back.pack(pady=10)
     window.mainloop()
 
@@ -631,26 +462,14 @@ def logout(window):
                   padx=10,
                   pady=10)
     label.grid(row=0, column=0, columnspan=2, padx=10, pady=10)
-    yes = Button(confirm_window, text="Yes")
-    yes.config(command=lambda: [confirm_window.destroy(),window.destroy(),askAccount()],
-                fg="white",
-                bg="black",
-                font=("Arial",15),
-                activebackground="white",
-                activeforeground="black")
+    yes = styled_button(confirm_window, "Yes", lambda:[confirm_window.destroy(),window.destroy(),askAccount()])
     yes.grid(row=1, column=0, padx=10, pady=10)
-    no = Button(confirm_window, text="No")
-    no.config(command=confirm_window.destroy,
-                fg="white",
-                bg="black",
-                font=("Arial",15),
-                activebackground="white",
-                activeforeground="black")
+    no = styled_button(confirm_window, "No", confirm_window.destroy)
     no.grid(row=1, column=1, padx=10, pady=10)
     confirm_window.mainloop()
 
 #Exit function
-def exit():
+def exit_function():
     window = Toplevel()
     window.transient()  
     window.grab_set()   
@@ -666,21 +485,9 @@ def exit():
                   padx=10,
                   pady=10)
     label.grid(row=0, column=0, columnspan=2, padx=10, pady=10)
-    yes = Button(window, text="Yes")
-    yes.config(command=quit,
-                fg="white",
-                bg="black",
-                font=("Arial",15),
-                activebackground="white",
-                activeforeground="black")
+    yes = styled_button(window, "Yes", quit)
     yes.grid(row=1, column=0, padx=10, pady=10)
-    no = Button(window, text="No")
-    no.config(command=window.destroy,
-                fg="white",
-                bg="black",
-                font=("Arial",15),
-                activebackground="white",
-                activeforeground="black")
+    no = styled_button(window, "No", window.destroy)
     no.grid(row=1, column=1, padx=10, pady=10)
     window.mainloop()
 
